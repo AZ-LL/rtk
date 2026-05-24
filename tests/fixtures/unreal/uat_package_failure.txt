@@ -1,0 +1,18 @@
+Running /path/to/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -noP4 -build -cook -stage -pak -archive -archivedirectory=/workspace/Artifacts/Linux -targetplatform=Linux -clientconfig=Shipping -utf8output
+AutomationTool executed for 0h 0m 0s
+Parsing command line: BuildCookRun -project=/workspace/Lyra/Lyra.uproject -build -cook -stage -pak -archive -targetplatform=Linux -clientconfig=Shipping -utf8output
+Running AutomationTool...
+Build: ********** BUILD COMMAND STARTED **********
+Build: ********** BUILD COMMAND COMPLETED **********
+Cook: ********** COOK COMMAND STARTED **********
+LogCook: Display: Cooked packages 400 Packages Remain 120 Total 520
+Cook: ********** COOK COMMAND COMPLETED **********
+Stage: ********** STAGE COMMAND STARTED **********
+LogStreaming: Display: Async loading flush took 0.018s
+PackagingResults: Error: Failed to copy /workspace/Lyra/Saved/Cooked/Linux/Lyra/Content/Paks/Lyra-Linux.pak to /workspace/Artifacts/Linux/Lyra-Linux.pak
+AutomationTool: Error: Stage Failed. Missing receipt '/workspace/Lyra/Binaries/Linux/Lyra.target'
+AutomationTool: Error: Cook failed.
+Stage: ********** STAGE COMMAND FAILED **********
+RunUAT ERROR: AutomationTool was unable to run successfully. Exited with code: 1
+AutomationTool exiting with ExitCode=1 (Error_Unknown)
+BUILD FAILED

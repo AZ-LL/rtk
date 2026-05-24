@@ -1,0 +1,22 @@
+Running /path/to/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -noP4 -build -cook -stage -pak -archive -archivedirectory=/workspace/Artifacts/Linux -targetplatform=Linux -clientconfig=Shipping -utf8output
+AutomationTool executed for 0h 0m 0s
+Parsing command line: BuildCookRun -project=/workspace/Lyra/Lyra.uproject -build -cook -stage -pak -archive -targetplatform=Linux -clientconfig=Shipping -utf8output
+Initializing script modules...
+Running AutomationTool...
+Build: ********** BUILD COMMAND STARTED **********
+Building Lyra Linux Shipping
+Build: ********** BUILD COMMAND COMPLETED **********
+Cook: ********** COOK COMMAND STARTED **********
+LogCook: Display: Cooked packages 300 Packages Remain 900 Total 1200
+LogCook: Display: Cooked packages 700 Packages Remain 500 Total 1200
+LogCook: Display: Cooked packages 1200 Packages Remain 0 Total 1200
+Cook: ********** COOK COMMAND COMPLETED **********
+Stage: ********** STAGE COMMAND STARTED **********
+Project.CopyBuildToStagingDirectory: ********** STAGE COMMAND COMPLETED **********
+Pak: ********** PAK COMMAND STARTED **********
+LogPakFile: Display: Added 1200 files, 2.8 GiB, compression format Oodle
+Pak: ********** PAK COMMAND COMPLETED **********
+Archive: ********** ARCHIVE COMMAND STARTED **********
+Archive: ********** ARCHIVE COMMAND COMPLETED **********
+BUILD SUCCESSFUL
+AutomationTool exiting with ExitCode=0 (Success)

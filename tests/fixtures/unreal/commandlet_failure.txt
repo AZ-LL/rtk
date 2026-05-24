@@ -1,0 +1,16 @@
+/path/to/UnrealEngine/Engine/Binaries/Linux/UnrealEditor-Cmd /workspace/Lyra/Lyra.uproject -run=DerivedDataCache -fill -unattended -nop4 -nullrhi
+LogInit: Display: Running engine for game: Lyra
+LogAssetRegistry: Display: FAssetRegistry took 0.0312 seconds to start up
+LogDerivedDataCache: Display: Scanning /Game/UI/HUD/WBP_Hud
+LogDerivedDataCache: Display: Scanning /Game/UI/Menus/WBP_MainMenu
+LogLinker: Warning: Asset '/Game/UI/Menus/WBP_MainMenu' has been saved with empty engine version.
+LogBlueprint: Error: [AssetLog] /Game/UI/Menus/WBP_MainMenu: Failed to load class /Script/LyraUI.MissingMenuWidget
+LogDerivedDataCache: Error: Build failed for package /Game/UI/Menus/WBP_MainMenu
+Ensure condition failed: WidgetClass != nullptr [File:/workspace/Lyra/Source/LyraUI/Private/LyraMenuFactory.cpp] [Line: 88]
+Stack:
+  UnrealEditor-LyraUI.so!ULyraMenuFactory::CreateMenu()
+  UnrealEditor-CoreUObject.so!UObject::ProcessEvent()
+  UnrealEditor-Cmd!FEngineLoop::Tick()
+LogOutputDevice: Error: Ensure condition failed
+Execution of commandlet took:  7.85 seconds
+LogExit: Executing StaticShutdownAfterError

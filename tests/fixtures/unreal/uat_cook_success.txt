@@ -1,0 +1,21 @@
+Running /path/to/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -noP4 -cook -targetplatform=Linux -clientconfig=Development -utf8output
+AutomationTool executed for 0h 0m 0s
+Using bundled DotNet SDK version: 8.0.300
+Parsing command line: BuildCookRun -project=/workspace/Lyra/Lyra.uproject -noP4 -cook -targetplatform=Linux -clientconfig=Development -utf8output
+Initializing script modules...
+Running AutomationTool...
+Found project path /workspace/Lyra/Lyra.uproject
+ProjectParams.ValidateAndLog:
+  Project= /workspace/Lyra/Lyra.uproject
+  TargetPlatform= Linux
+  ClientConfig= Development
+Cook: ********** COOK COMMAND STARTED **********
+LogCook: Display: Cooked packages 250 Packages Remain 320 Total 570
+LogCook: Display: Cooked packages 500 Packages Remain 70 Total 570
+LogSavePackage: Display: Finished SavePackage /Game/Maps/L_Default
+LogSavePackage: Display: Finished SavePackage /Game/Characters/Heroes/B_Hero_A
+LogShaderCompilers: Display: Worker 0: 1250 shaders left to compile
+LogCook: Display: Cooked packages 570 Packages Remain 0 Total 570
+Cook: ********** COOK COMMAND COMPLETED **********
+BUILD SUCCESSFUL
+AutomationTool exiting with ExitCode=0 (Success)

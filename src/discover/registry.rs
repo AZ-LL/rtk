@@ -626,6 +626,107 @@ fn rewrite_line_range(cmd: &str) -> Option<String> {
     None
 }
 
+fn try_unreal_rewrite(cmd: &str) -> Option<String> {
+    let first = cmd.split_whitespace().next()?;
+    let executable = first.trim_matches(|c| c == '"' || c == '\'');
+    let executable_normalized = executable.replace('\\', "/");
+    let basename = executable_normalized
+        .rsplit('/')
+        .next()
+        .unwrap_or(&executable_normalized)
+        .to_ascii_lowercase();
+    let cmd_lower = cmd.to_ascii_lowercase();
+
+    let mode = if is_unreal_uat(&basename) {
+        detect_uat_mode(&cmd_lower)
+    } else if is_unreal_editor_cmd(&basename) {
+        if cmd_lower.contains("automation")
+            || cmd_lower.contains("runtests")
+            || cmd_lower.contains("-testexit")
+        {
+            "automation"
+        } else {
+            "commandlet"
+        }
+    } else if is_unreal_build_tool(&basename)
+        || is_unreal_batch_build(&basename, &executable_normalized, cmd)
+    {
+        "build"
+    } else {
+        return None;
+    };
+
+    Some(format!("rtk unreal {} {}", mode, cmd))
+}
+
+fn is_unreal_uat(basename: &str) -> bool {
+    matches!(
+        basename,
+        "runuat" | "runuat.sh" | "runuat.bat" | "runuat.cmd"
+    )
+}
+
+fn is_unreal_build_tool(basename: &str) -> bool {
+    matches!(
+        basename,
+        "runubt" | "runubt.sh" | "runubt.bat" | "runubt.cmd" | "unrealbuildtool"
+    )
+}
+
+fn is_unreal_editor_cmd(basename: &str) -> bool {
+    matches!(basename, "unrealeditor-cmd" | "unrealeditor-cmd.exe")
+}
+
+fn is_unreal_batch_build(basename: &str, executable: &str, cmd: &str) -> bool {
+    if basename != "build.sh" && basename != "build.bat" {
+        return false;
+    }
+
+    let lower_executable = executable.to_ascii_lowercase();
+    if lower_executable.contains("/engine/build/batchfiles/") {
+        return true;
+    }
+
+    let tokens = crate::discover::lexer::shell_split(cmd);
+    if tokens.len() >= 4 && is_unreal_platform(&tokens[2]) && is_unreal_configuration(&tokens[3]) {
+        return true;
+    }
+
+    tokens.iter().any(|token| {
+        let lower = token.to_ascii_lowercase();
+        lower.starts_with("-project=") && lower.ends_with(".uproject")
+    })
+}
+
+fn is_unreal_platform(token: &str) -> bool {
+    matches!(
+        token.to_ascii_lowercase().as_str(),
+        "linux" | "win64" | "mac" | "android" | "ios"
+    )
+}
+
+fn is_unreal_configuration(token: &str) -> bool {
+    matches!(
+        token.to_ascii_lowercase().as_str(),
+        "debug" | "debuggame" | "development" | "shipping" | "test"
+    )
+}
+
+fn detect_uat_mode(cmd_lower: &str) -> &'static str {
+    if cmd_lower.contains("buildcookrun")
+        && (cmd_lower.contains("-stage")
+            || cmd_lower.contains("-pak")
+            || cmd_lower.contains("-archive")
+            || cmd_lower.contains("package"))
+    {
+        "package"
+    } else if cmd_lower.contains("-cook") || cmd_lower.contains(" cook") {
+        "cook"
+    } else {
+        "uat"
+    }
+}
+
 /// Shell prefix builtins that modify how the shell runs a command
 /// but don't change which command runs. Strip before routing, re-prepend after.
 const SHELL_PREFIX_BUILTINS: &[&str] = &["noglob", "command", "builtin", "exec", "nocorrect"];
@@ -757,6 +858,10 @@ fn rewrite_segment_inner(
     // Already RTK — pass through unchanged
     if cmd_part.starts_with("rtk ") || cmd_part == "rtk" {
         return Some(trimmed.to_string());
+    }
+
+    if let Some(rewritten) = try_unreal_rewrite(cmd_part) {
+        return Some(format!("{}{}", rewritten, redirect_suffix));
     }
 
     if cmd_part.starts_with("head -") || cmd_part.starts_with("tail ") {
@@ -3069,6 +3174,96 @@ mod tests {
                 estimated_savings_pct: 90.0,
                 status: RtkStatus::Existing,
             }
+        );
+    }
+
+    #[test]
+    fn test_rewrite_unreal_runuat_cook() {
+        assert_eq!(
+            rewrite_command_no_prefixes(
+                "/path/to/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -cook -targetplatform=Linux",
+                &[]
+            ),
+            Some(
+                "rtk unreal cook /path/to/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -cook -targetplatform=Linux"
+                    .into()
+            )
+        );
+    }
+
+    #[test]
+    fn test_rewrite_unreal_runuat_package() {
+        assert_eq!(
+            rewrite_command_no_prefixes(
+                "RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -cook -stage -pak -archive -targetplatform=Linux",
+                &[]
+            ),
+            Some(
+                "rtk unreal package RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -cook -stage -pak -archive -targetplatform=Linux"
+                    .into()
+            )
+        );
+    }
+
+    #[test]
+    fn test_rewrite_unreal_batchfiles_build() {
+        assert_eq!(
+            rewrite_command_no_prefixes(
+                "/path/to/UnrealEngine/Engine/Build/BatchFiles/Linux/Build.sh LyraEditor Linux Development -Project=/workspace/Lyra/Lyra.uproject",
+                &[]
+            ),
+            Some(
+                "rtk unreal build /path/to/UnrealEngine/Engine/Build/BatchFiles/Linux/Build.sh LyraEditor Linux Development -Project=/workspace/Lyra/Lyra.uproject"
+                    .into()
+            )
+        );
+    }
+
+    #[test]
+    fn test_rewrite_unreal_build_with_identifying_args() {
+        assert_eq!(
+            rewrite_command_no_prefixes(
+                "./Build.sh LyraEditor Linux Development -Project=/workspace/Lyra/Lyra.uproject",
+                &[]
+            ),
+            Some(
+                "rtk unreal build ./Build.sh LyraEditor Linux Development -Project=/workspace/Lyra/Lyra.uproject"
+                    .into()
+            )
+        );
+    }
+
+    #[test]
+    fn test_rewrite_generic_build_sh_skipped() {
+        assert_eq!(rewrite_command_no_prefixes("./Build.sh all", &[]), None);
+        assert_eq!(rewrite_command_no_prefixes("Build.sh", &[]), None);
+    }
+
+    #[test]
+    fn test_rewrite_unreal_editor_commandlet() {
+        assert_eq!(
+            rewrite_command_no_prefixes(
+                "/path/to/UnrealEngine/Engine/Binaries/Linux/UnrealEditor-Cmd /workspace/Lyra/Lyra.uproject -run=ResavePackages -unattended",
+                &[]
+            ),
+            Some(
+                "rtk unreal commandlet /path/to/UnrealEngine/Engine/Binaries/Linux/UnrealEditor-Cmd /workspace/Lyra/Lyra.uproject -run=ResavePackages -unattended"
+                    .into()
+            )
+        );
+    }
+
+    #[test]
+    fn test_rewrite_unreal_editor_automation() {
+        assert_eq!(
+            rewrite_command_no_prefixes(
+                "UnrealEditor-Cmd.exe C:\\Game\\Lyra.uproject -ExecCmds=\"Automation RunTests Lyra.Inventory; Quit\" -TestExit=\"Automation Test Queue Empty\"",
+                &[]
+            ),
+            Some(
+                "rtk unreal automation UnrealEditor-Cmd.exe C:\\Game\\Lyra.uproject -ExecCmds=\"Automation RunTests Lyra.Inventory; Quit\" -TestExit=\"Automation Test Queue Empty\""
+                    .into()
+            )
         );
     }
 

@@ -1,0 +1,23 @@
+Running /path/to/UnrealEngine/Engine/Build/BatchFiles/Linux/Build.sh LyraEditor Linux Development -Project=/workspace/Lyra/Lyra.uproject -WaitMutex
+Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet UnrealBuildTool.dll LyraEditor Linux Development -Project=/workspace/Lyra/Lyra.uproject -WaitMutex
+Log file: <UnrealBuildTool log path>
+Creating makefile for LyraEditor (no existing makefile)
+Parsing headers for LyraEditor
+  Running Internal UnrealHeaderTool /workspace/Lyra/Lyra.uproject /workspace/Lyra/Intermediate/Build/Linux/LyraEditor/Development/LyraEditor.uhtmanifest -WarningsAsErrors
+Reflection code generated for LyraEditor in 1.822141 seconds
+Building LyraEditor...
+Determining max actions to execute in parallel (16 physical cores, 32 logical cores)
+  Executing up to 16 processes, one per physical core
+[1/18] Compile Module.LyraGame.1.cpp
+[2/18] Compile Module.LyraGame.2.cpp
+[3/18] Compile Module.LyraGame.3.cpp
+[4/18] Compile SharedPCH.Engine.ShadowErrors.InclOrderUnreal5_8.cpp
+[5/18] Compile Module.LyraUI.cpp
+[6/18] Compile Module.LyraEditor.cpp
+[7/18] Link libUnrealEditor-LyraGame.so
+[8/18] Link libUnrealEditor-LyraUI.so
+[9/18] WriteMetadata LyraEditor.target
+Total time in Parallel executor: 24.22 seconds
+Total execution time: 31.48 seconds
+Result: Succeeded

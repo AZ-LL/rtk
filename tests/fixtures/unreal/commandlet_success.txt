@@ -1,0 +1,11 @@
+/path/to/UnrealEngine/Engine/Binaries/Linux/UnrealEditor-Cmd /workspace/Lyra/Lyra.uproject -run=ResavePackages -Package=/Game/Characters -unattended -nop4 -nullrhi
+LogInit: Display: Running engine for game: Lyra
+LogAssetRegistry: Display: FAssetRegistry took 0.0312 seconds to start up
+LogSourceControl: Display: Source control is disabled
+LogContentCommandlet: Display: Resaving package /Game/Characters/Heroes/BP_Hero_Ranger
+LogContentCommandlet: Display: Resaving package /Game/Characters/Heroes/BP_Hero_Mage
+LogSavePackage: Display: Finished SavePackage /Game/Characters/Heroes/BP_Hero_Ranger
+LogSavePackage: Display: Finished SavePackage /Game/Characters/Heroes/BP_Hero_Mage
+LogContentCommandlet: Display: ResavePackages complete: 2 packages processed, 0 errors
+Execution of commandlet took:  12.34 seconds
+LogExit: Exiting.

@@ -1,0 +1,16 @@
+Running /path/to/UnrealEngine/Engine/Build/BatchFiles/Linux/Build.sh LyraServer Linux Shipping -Project=/workspace/Lyra/Lyra.uproject -WaitMutex
+Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet UnrealBuildTool.dll LyraServer Linux Shipping -Project=/workspace/Lyra/Lyra.uproject -WaitMutex
+Log file: <UnrealBuildTool log path>
+Building LyraServer...
+Determining max actions to execute in parallel (16 physical cores, 32 logical cores)
+[1/8] Compile Module.LyraGame.cpp
+[2/8] Compile Module.LyraRuntime.cpp
+[3/8] Link LyraServer
+/usr/bin/ld: /workspace/Lyra/Intermediate/Build/Linux/LyraServer/Shipping/LyraGame/Module.LyraGame.cpp.o: in function `ULyraAbilitySet::GiveToAbilitySystem(ULyraAbilitySystemComponent*) const':
+Module.LyraGame.cpp:(.text+0x3a11): undefined reference to `ULyraAbilitySystemComponent::GrantStartupEffects()'
+clang++: error: linker command failed with exit code 1 (use -v to see invocation)
+Total time in Parallel executor: 17.90 seconds
+Total execution time: 21.01 seconds
+UnrealBuildTool failed. See log for more details.
+Result: Failed (OtherCompilationError)
