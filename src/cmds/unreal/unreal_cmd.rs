@@ -77,11 +77,11 @@ pub fn run(mode: UnrealMode, args: &[String], verbose: u8) -> Result<i32> {
     }
 
     let args_owned = args.to_vec();
-    runner::run_filtered(
+    runner::run_filtered_with_exit_code(
         cmd,
         executable,
         &native_args.join(" "),
-        move |raw| filter_output(raw, mode, &args_owned),
+        move |raw, exit_code| filter_output_with_exit_code(raw, mode, &args_owned, exit_code),
         RunOptions::with_tee(match mode {
             UnrealMode::Build => "unreal_build",
             UnrealMode::Uat => "unreal_uat",
@@ -152,11 +152,22 @@ impl CappedLines {
 #[derive(Default)]
 struct FilterState {
     failure_seen: bool,
+    process_exit_code: Option<i32>,
     progress_total: usize,
     packages_seen: Option<String>,
 }
 
+#[cfg(test)]
 pub(crate) fn filter_output(raw: &str, mode: UnrealMode, args: &[String]) -> String {
+    filter_output_with_exit_code(raw, mode, args, 0)
+}
+
+pub(crate) fn filter_output_with_exit_code(
+    raw: &str,
+    mode: UnrealMode,
+    args: &[String],
+    exit_code: i32,
+) -> String {
     let cleaned = ANSI_RE.replace_all(raw, "");
     let mut diagnostics = CappedLines::new("diagnostics", CAP_ERRORS);
     let mut warnings = CappedLines::new("warnings", CAP_WARNINGS);
@@ -218,6 +229,11 @@ pub(crate) fn filter_output(raw: &str, mode: UnrealMode, args: &[String]) -> Str
         }
     }
 
+    if exit_code != 0 {
+        state.process_exit_code = Some(exit_code);
+        state.failure_seen = true;
+    }
+
     if state.failure_seen || !diagnostics.is_empty() {
         return format_failure_output(
             mode,
@@ -241,16 +257,22 @@ fn format_failure_output(
     raw: &str,
 ) -> String {
     let mut out = Vec::new();
+    let summaries_before_tail = diagnostics.is_empty();
 
     if diagnostics.is_empty() {
         out.push(format!("unreal {}: failed", mode.label()));
+        append_process_exit(&mut out, state);
+        summaries.append_to(&mut out);
         out.extend(fallback_tail(raw, 12));
     } else {
         diagnostics.append_to(&mut out);
+        append_process_exit(&mut out, state);
     }
 
     warnings.append_to(&mut out);
-    summaries.append_to(&mut out);
+    if !summaries_before_tail {
+        summaries.append_to(&mut out);
+    }
 
     if state.progress_total > 0 {
         out.push(format!(
@@ -260,6 +282,12 @@ fn format_failure_output(
     }
 
     compact_lines(out).join("\n")
+}
+
+fn append_process_exit(out: &mut Vec<String>, state: &FilterState) {
+    if let Some(exit_code) = state.process_exit_code {
+        out.push(format!("process exited with code {exit_code}"));
+    }
 }
 
 fn format_success_output(
@@ -484,6 +512,21 @@ mod tests {
         assert!(out.contains("LyraEditor Linux Development"));
         assert!(!out.contains("[1/18] Compile"));
         assert!(savings(raw, &out) >= 70.0);
+    }
+
+    #[test]
+    fn build_nonzero_exit_overrides_success_shaped_log() {
+        let raw = include_str!("../../../tests/fixtures/unreal/build_success.txt");
+        let args = vec![
+            "Build.sh".to_string(),
+            "LyraEditor".to_string(),
+            "Linux".to_string(),
+            "Development".to_string(),
+        ];
+        let out = filter_output_with_exit_code(raw, UnrealMode::Build, &args, 134);
+        assert!(out.contains("unreal build: failed"));
+        assert!(out.contains("process exited with code 134"));
+        assert!(!out.contains("unreal build: ok"));
     }
 
     #[test]
