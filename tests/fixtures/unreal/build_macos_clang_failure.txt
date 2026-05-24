@@ -1,0 +1,18 @@
+Running /Applications/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh LyraEditor Mac Development -Project=/Users/dev/Lyra/Lyra.uproject -WaitMutex
+Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet UnrealBuildTool.dll LyraEditor Mac Development -Project=/Users/dev/Lyra/Lyra.uproject -WaitMutex
+Log file: <UnrealBuildTool log path>
+Building LyraEditor...
+Determining max actions to execute in parallel (10 physical cores, 10 logical cores)
+[1/9] Compile Module.LyraGame.cpp
+/Users/dev/Lyra/Source/LyraGame/Private/LyraInventoryComponent.cpp:74:9: error: use of undeclared identifier 'MissingSlot'
+    if (MissingSlot)
+        ^
+/Users/dev/Lyra/Source/LyraGame/Private/LyraInventoryComponent.cpp:81:13: warning: unused variable 'InventoryOwner' [-Wunused-variable]
+    UObject* InventoryOwner = nullptr;
+            ^
+[2/9] Link UnrealEditor-LyraGame.dylib cancelled
+Total time in Parallel executor: 8.33 seconds
+Total execution time: 12.04 seconds
+UnrealBuildTool failed. See log for more details.
+Result: Failed (OtherCompilationError)

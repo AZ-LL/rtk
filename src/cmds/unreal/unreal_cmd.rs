@@ -507,6 +507,38 @@ mod tests {
     }
 
     #[test]
+    fn build_windows_msvc_failure_keeps_diagnostics() {
+        let raw = include_str!("../../../tests/fixtures/unreal/build_windows_msvc_failure.txt");
+        let out = filter_output(raw, UnrealMode::Build, &["Build.bat".to_string()]);
+        assert!(out.contains("C2065"));
+        assert!(out.contains("MissingAbility"));
+        assert!(out.contains("LyraAbilityComponent.cpp"));
+        assert!(out.contains("UnrealBuildTool failed"));
+        assert!(!out.contains("[1/10] Compile"));
+    }
+
+    #[test]
+    fn build_windows_link_failure_keeps_linker_details() {
+        let raw = include_str!("../../../tests/fixtures/unreal/build_windows_link_failure.txt");
+        let out = filter_output(raw, UnrealMode::Build, &["Build.bat".to_string()]);
+        assert!(out.contains("LNK2019"));
+        assert!(out.contains("GrantStartupEffects"));
+        assert!(out.contains("LNK1120"));
+        assert!(out.contains("UnrealBuildTool failed"));
+    }
+
+    #[test]
+    fn build_macos_clang_failure_keeps_diagnostics() {
+        let raw = include_str!("../../../tests/fixtures/unreal/build_macos_clang_failure.txt");
+        let out = filter_output(raw, UnrealMode::Build, &["Build.sh".to_string()]);
+        assert!(out.contains("MissingSlot"));
+        assert!(out.contains("LyraInventoryComponent.cpp"));
+        assert!(out.contains("unused variable"));
+        assert!(out.contains("UnrealBuildTool failed"));
+        assert!(!out.contains("[1/9] Compile"));
+    }
+
+    #[test]
     fn cook_failure_keeps_asset_context_and_summary() {
         let raw = include_str!("../../../tests/fixtures/unreal/uat_cook_failure.txt");
         let out = filter_output(raw, UnrealMode::Cook, &["RunUAT.sh".to_string()]);
@@ -562,6 +594,16 @@ mod tests {
         assert!(out.contains("WBP_MainMenu"));
         assert!(out.contains("Ensure condition failed"));
         assert!(out.contains("ULyraMenuFactory::CreateMenu"));
+    }
+
+    #[test]
+    fn commandlet_macos_dylib_failure_keeps_module_stack() {
+        let raw = include_str!("../../../tests/fixtures/unreal/commandlet_macos_dylib_failure.txt");
+        let out = filter_output(raw, UnrealMode::Commandlet, &["UnrealEditor-Cmd".to_string()]);
+        assert!(out.contains("UnrealEditor-LyraRuntime.dylib"));
+        assert!(out.contains("FLyraRuntimeModule::StartupModule"));
+        assert!(out.contains("Failed to load module LyraRuntime"));
+        assert!(!out.contains("FAssetRegistry took"));
     }
 
     #[test]

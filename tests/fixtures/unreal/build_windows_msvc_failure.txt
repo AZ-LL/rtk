@@ -1,0 +1,14 @@
+Running C:\UnrealEngine\Engine\Build\BatchFiles\Build.bat LyraEditor Win64 Development -Project=C:\Lyra\Lyra.uproject -WaitMutex
+Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet UnrealBuildTool.dll LyraEditor Win64 Development -Project=C:\Lyra\Lyra.uproject -WaitMutex
+Log file: <UnrealBuildTool log path>
+Building LyraEditor...
+Determining max actions to execute in parallel (16 physical cores, 32 logical cores)
+[1/10] Compile [x64] Module.LyraGame.1.cpp
+C:\Lyra\Source\LyraGame\Private\LyraAbilityComponent.cpp(42): error C2065: 'MissingAbility': undeclared identifier
+C:\Lyra\Source\LyraGame\Private\LyraAbilityComponent.cpp(45): warning C4101: 'ActivationInfo': unreferenced local variable
+[2/10] Compile [x64] Module.LyraGame.2.cpp
+Total time in Parallel executor: 9.18 seconds
+Total execution time: 13.44 seconds
+UnrealBuildTool failed. See log for more details.
+Result: Failed (OtherCompilationError)

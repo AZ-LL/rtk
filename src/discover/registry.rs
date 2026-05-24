@@ -957,6 +957,13 @@ mod tests {
         super::rewrite_command(cmd, excluded, &[])
     }
 
+    fn assert_unreal_rewrite(command: &str, mode: &str) {
+        assert_eq!(
+            rewrite_command_no_prefixes(command, &[]),
+            Some(format!("rtk unreal {} {}", mode, command))
+        );
+    }
+
     #[test]
     fn test_classify_git_status() {
         assert_eq!(
@@ -3237,6 +3244,70 @@ mod tests {
     fn test_rewrite_generic_build_sh_skipped() {
         assert_eq!(rewrite_command_no_prefixes("./Build.sh all", &[]), None);
         assert_eq!(rewrite_command_no_prefixes("Build.sh", &[]), None);
+    }
+
+    #[test]
+    fn test_rewrite_unreal_cross_platform_command_forms() {
+        let cases = [
+            (
+                "/opt/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -cook -targetplatform=Linux",
+                "cook",
+            ),
+            (
+                "/opt/UnrealEngine/Engine/Build/BatchFiles/Linux/Build.sh LyraEditor Linux Development -Project=/workspace/Lyra/Lyra.uproject",
+                "build",
+            ),
+            (
+                "/Applications/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/Users/dev/Lyra/Lyra.uproject -cook -targetplatform=Mac",
+                "cook",
+            ),
+            (
+                "/Applications/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh LyraEditor Mac Development -Project=/Users/dev/Lyra/Lyra.uproject",
+                "build",
+            ),
+            (
+                r"C:\UnrealEngine\Engine\Build\BatchFiles\RunUAT.bat BuildCookRun -project=C:\Lyra\Lyra.uproject -cook -targetplatform=Win64",
+                "cook",
+            ),
+            (
+                r"C:\UnrealEngine\Engine\Build\BatchFiles\RunUAT.cmd BuildCookRun -project=C:\Lyra\Lyra.uproject -cook -stage -pak -archive -targetplatform=Win64",
+                "package",
+            ),
+            (
+                r"C:\UnrealEngine\Engine\Build\BatchFiles\Build.bat LyraEditor Win64 Development -Project=C:\Lyra\Lyra.uproject",
+                "build",
+            ),
+            (
+                r"C:\UnrealEngine\Engine\Build\BatchFiles\RunUBT.bat LyraEditor Win64 Development -Project=C:\Lyra\Lyra.uproject",
+                "build",
+            ),
+            (
+                r"C:\UnrealEngine\Engine\Binaries\Win64\UnrealEditor-Cmd.exe C:\Lyra\Lyra.uproject -run=ResavePackages -unattended",
+                "commandlet",
+            ),
+            (
+                r#"C:\UnrealEngine\Engine\Binaries\Win64\UnrealEditor-Cmd.exe C:\Lyra\Lyra.uproject -ExecCmds="Automation RunTests Lyra.Inventory; Quit" -TestExit="Automation Test Queue Empty""#,
+                "automation",
+            ),
+        ];
+
+        for (command, mode) in cases {
+            assert_unreal_rewrite(command, mode);
+        }
+    }
+
+    #[test]
+    fn test_rewrite_generic_build_scripts_skipped_cross_platform() {
+        for command in [
+            "./Build.sh all",
+            "Build.sh",
+            "Build.sh all",
+            r".\Build.bat all",
+            "Build.bat",
+            "Build.bat all",
+        ] {
+            assert_eq!(rewrite_command_no_prefixes(command, &[]), None);
+        }
     }
 
     #[test]
