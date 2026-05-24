@@ -198,6 +198,21 @@ rtk golangci-lint run           # Go linting (JSON, -85%)
 rtk rubocop                     # Ruby linting (JSON, -60%+)
 ```
 
+### Unreal Engine
+```bash
+rtk unreal build /path/to/UnrealEngine/Engine/Build/BatchFiles/Linux/Build.sh LyraEditor Linux Development -Project=/workspace/Lyra/Lyra.uproject
+rtk unreal cook /path/to/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -cook -targetplatform=Linux
+rtk unreal package /path/to/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -cook -stage -pak -archive -targetplatform=Linux
+rtk unreal build /Applications/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh LyraEditor Mac Development -Project=/Users/dev/Lyra/Lyra.uproject
+rtk unreal build C:\UnrealEngine\Engine\Build\BatchFiles\Build.bat LyraEditor Win64 Development -Project=C:\Lyra\Lyra.uproject
+rtk unreal commandlet /path/to/UnrealEngine/Engine/Binaries/Linux/UnrealEditor-Cmd /workspace/Lyra/Lyra.uproject -run=ResavePackages -unattended
+rtk unreal automation /path/to/UnrealEngine/Engine/Binaries/Linux/UnrealEditor-Cmd /workspace/Lyra/Lyra.uproject -ExecCmds="Automation RunTests Lyra.Inventory; Quit" -TestExit="Automation Test Queue Empty"
+```
+
+Hooks rewrite known Unreal commands across Linux, macOS, and Windows: `RunUAT.sh`, `RunUAT.bat`, `RunUAT.cmd`, `RunUBT`, Unreal `Engine/Build/BatchFiles/.../Build.sh`, `Build.bat`, and `UnrealEditor-Cmd(.exe)`. Generic scripts named `Build.sh` or `Build.bat` are left raw unless the path or arguments identify an Unreal workflow. Unreal filters keep compiler/linker errors, UAT cook/package failures, failed assets, commandlet fatal/ensure context, automation-test failures, final summaries, and native exit codes.
+
+For profiling, timing, or exhaustive cook/package audits, inspect RTK's `[full output: ...]` tee log on failures or run the native command with `RTK_DISABLED=1` to bypass filtering.
+
 ### Package Managers
 ```bash
 rtk pnpm list                   # Compact dependency tree

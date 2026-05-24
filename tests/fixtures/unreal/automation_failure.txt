@@ -1,0 +1,15 @@
+/path/to/UnrealEngine/Engine/Binaries/Linux/UnrealEditor-Cmd /workspace/Lyra/Lyra.uproject -ExecCmds="Automation RunTests Lyra.Inventory; Quit" -TestExit="Automation Test Queue Empty" -unattended -nop4 -nullrhi
+LogInit: Display: Running engine for game: Lyra
+LogAutomationController: Display: Running test Lyra.Inventory.CanAddItem
+LogAutomationController: Display: Test Completed. Result={Success} Name={Lyra.Inventory.CanAddItem} Path={Lyra.Inventory.CanAddItem}
+LogAutomationController: Display: Running test Lyra.Inventory.ReplicatesInventory
+LogAutomationController: Error: Automation Test Failed: Lyra.Inventory.ReplicatesInventory
+LogAutomationController: Error: Expected replicated count 3 but found 2
+LogAutomationController: Error: /workspace/Lyra/Source/LyraGame/Tests/InventoryReplicationTest.cpp(74)
+LogAutomationController: Display: Test Completed. Result={Fail} Name={Lyra.Inventory.ReplicatesInventory} Path={Lyra.Inventory.ReplicatesInventory}
+LogAutomationController: Display: Running test Lyra.Inventory.CanRemoveItem
+LogAutomationController: Display: Test Completed. Result={Success} Name={Lyra.Inventory.CanRemoveItem} Path={Lyra.Inventory.CanRemoveItem}
+LogAutomationController: Warning: Screenshot comparison was skipped for /Game/UI/HUD/WBP_Hud
+LogAutomationController: Display: 3 tests completed in 5.02 seconds. 2 passed, 1 failed, 0 skipped.
+LogAutomationCommandLine: Error: Automation test run failed.
+LogExit: Exiting.

@@ -1,0 +1,12 @@
+/path/to/UnrealEngine/Engine/Binaries/Linux/UnrealEditor-Cmd /workspace/Lyra/Lyra.uproject -ExecCmds="Automation RunTests Lyra.Inventory; Quit" -TestExit="Automation Test Queue Empty" -unattended -nop4 -nullrhi
+LogInit: Display: Running engine for game: Lyra
+LogAutomationController: Display: Ignoring very large log window entry
+LogAutomationController: Display: Running test Lyra.Inventory.CanAddItem
+LogAutomationController: Display: Test Completed. Result={Success} Name={Lyra.Inventory.CanAddItem} Path={Lyra.Inventory.CanAddItem}
+LogAutomationController: Display: Running test Lyra.Inventory.CanRemoveItem
+LogAutomationController: Display: Test Completed. Result={Success} Name={Lyra.Inventory.CanRemoveItem} Path={Lyra.Inventory.CanRemoveItem}
+LogAutomationController: Display: Running test Lyra.Inventory.ReplicatesInventory
+LogAutomationController: Display: Test Completed. Result={Success} Name={Lyra.Inventory.ReplicatesInventory} Path={Lyra.Inventory.ReplicatesInventory}
+LogAutomationController: Display: Automation Test Queue Empty
+LogAutomationController: Display: 3 tests completed in 4.21 seconds. 3 passed, 0 failed, 0 skipped.
+LogExit: Exiting.

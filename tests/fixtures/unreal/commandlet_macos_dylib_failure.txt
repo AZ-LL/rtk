@@ -1,0 +1,11 @@
+/Applications/UnrealEngine/Engine/Binaries/Mac/UnrealEditor-Cmd /Users/dev/Lyra/Lyra.uproject -run=ResavePackages -unattended -nop4 -nullrhi
+LogInit: Display: Running engine for game: Lyra
+LogAssetRegistry: Display: FAssetRegistry took 0.0301 seconds to start up
+LogModuleManager: Error: dlopen(/Users/dev/Lyra/Binaries/Mac/UnrealEditor-LyraRuntime.dylib, 0x0001): symbol not found: _RegisterLyraRuntimeModule
+Stack:
+  UnrealEditor-LyraRuntime.dylib!FLyraRuntimeModule::StartupModule()
+  UnrealEditor-Core.dylib!FModuleManager::LoadModuleWithFailureReason()
+  UnrealEditor-Cmd!FEngineLoop::PreInitPostStartupScreen()
+LogOutputDevice: Error: Failed to load module LyraRuntime
+Execution of commandlet took:  5.29 seconds
+LogExit: Executing StaticShutdownAfterError

@@ -94,6 +94,18 @@ Typical savings: 60-99%.
 | `dotnet test` | 85-90% | Failures only |
 | `dotnet format` | 75% | Changed files only |
 
+## Unreal Engine
+
+| Command | Savings | What changes |
+|---------|---------|--------------|
+| `RunUAT` / `rtk unreal cook` | 70-90% | Linux/macOS/Windows cook progress stripped, failed assets and UAT summaries preserved |
+| `RunUAT` / `rtk unreal package` | 70-90% | Linux/macOS/Windows stage, pak, and archive noise stripped; packaging errors preserved |
+| `RunUBT` / BatchFiles `Build.sh` / `Build.bat` | 70-90% | UBT progress stripped, Clang/MSVC/linker diagnostics preserved |
+| `UnrealEditor-Cmd(.exe) -run=...` | 70-90% | Commandlet progress stripped, fatal/assert/ensure/module context preserved |
+| `UnrealEditor-Cmd(.exe)` automation | 70-90% | Passing test noise stripped, failed tests and summaries preserved |
+
+RTK rewrites known Unreal command names and Unreal Engine batch-file paths across Linux, macOS, and Windows. A generic `Build.sh` or `Build.bat` is not rewritten unless the path or arguments identify an Unreal build. For profiling, timing, or exhaustive cook/package audits, inspect the raw tee log on failures or run the native command with `RTK_DISABLED=1`.
+
 ## Docker / Kubernetes
 
 | Command | Savings | What changes |

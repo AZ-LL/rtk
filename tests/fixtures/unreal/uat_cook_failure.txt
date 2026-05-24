@@ -1,0 +1,17 @@
+Running /path/to/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/workspace/Lyra/Lyra.uproject -noP4 -cook -targetplatform=Linux -clientconfig=Development -utf8output
+AutomationTool executed for 0h 0m 0s
+Parsing command line: BuildCookRun -project=/workspace/Lyra/Lyra.uproject -noP4 -cook -targetplatform=Linux -clientconfig=Development -utf8output
+Initializing script modules...
+Running AutomationTool...
+Cook: ********** COOK COMMAND STARTED **********
+LogCook: Display: Cooked packages 125 Packages Remain 630 Total 755
+LogSavePackage: Display: Finished SavePackage /Game/Weapons/Rifle/SK_Rifle
+LogCook: Display: Cooked packages 250 Packages Remain 505 Total 755
+LogAssetRegistry: Display: Asset registry cache written as 32.1 MiB
+LogLinker: Warning: VerifyImport: Failed to find script package for import object 'Package /Script/MissingGameplay'
+LogCook: Error: Unable to cook package for asset /Game/Characters/Heroes/BP_Hero_Mage. Referenced package /Game/Abilities/GA_MissingSpell could not be found.
+LogPackageName: Error: DoesPackageExist called on PackageName that will always return false. Reason: Input '/Game/Abilities/GA_MissingSpell' is missing or invalid.
+PackagingResults: Error: Unknown Cook Failure
+Cook: ********** COOK COMMAND FAILED **********
+AutomationTool exiting with ExitCode=25 (Error_UnknownCookFailure)
+BUILD FAILED

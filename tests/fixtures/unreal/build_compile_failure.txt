@@ -1,0 +1,24 @@
+Running /path/to/UnrealEngine/Engine/Build/BatchFiles/Linux/Build.sh LyraEditor Linux Development -Project=/workspace/Lyra/Lyra.uproject -WaitMutex
+Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet UnrealBuildTool.dll LyraEditor Linux Development -Project=/workspace/Lyra/Lyra.uproject -WaitMutex
+Log file: <UnrealBuildTool log path>
+Creating makefile for LyraEditor (source file changed)
+Parsing headers for LyraEditor
+  Running Internal UnrealHeaderTool /workspace/Lyra/Lyra.uproject /workspace/Lyra/Intermediate/Build/Linux/LyraEditor/Development/LyraEditor.uhtmanifest -WarningsAsErrors
+Reflection code generated for LyraEditor in 1.141829 seconds
+Building LyraEditor...
+Determining max actions to execute in parallel (16 physical cores, 32 logical cores)
+[1/11] Compile Module.LyraGame.1.cpp
+[2/11] Compile Module.LyraGame.2.cpp
+/workspace/Lyra/Source/LyraGame/Inventory/LyraInventoryComponent.cpp:128:17: error: no member named 'GetItemCount' in 'ULyraInventoryItemInstance'
+    Count += Item->GetItemCount();
+             ~~~~  ^
+/workspace/Lyra/Source/LyraGame/Inventory/LyraInventoryComponent.cpp:132:12: warning: unused variable 'bNeedsRefresh' [-Wunused-variable]
+    bool bNeedsRefresh = false;
+         ^
+[3/11] Compile Module.LyraGame.3.cpp
+[4/11] Link libUnrealEditor-LyraGame.so cancelled
+Total time in Parallel executor: 9.62 seconds
+Total execution time: 14.31 seconds
+UnrealBuildTool failed. See log for more details.
+Result: Failed (OtherCompilationError)

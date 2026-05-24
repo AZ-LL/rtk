@@ -23,6 +23,7 @@ use cmds::system::{
     deps, env_cmd, find_cmd, format_cmd, grep_cmd, json_cmd, local_llm, log_cmd, ls, pipe_cmd,
     read, summary, tree, wc_cmd,
 };
+use cmds::unreal::unreal_cmd::{self, UnrealMode};
 
 use anyhow::{Context, Result};
 use clap::error::ErrorKind;
@@ -736,6 +737,12 @@ enum Commands {
         args: Vec<String>,
     },
 
+    /// Unreal Engine commands with compact build, cook, package, commandlet, and automation output
+    Unreal {
+        #[command(subcommand)]
+        command: UnrealCommands,
+    },
+
     /// Show hook rewrite audit metrics (requires RTK_HOOK_AUDIT=1)
     #[command(name = "hook-audit")]
     HookAudit {
@@ -1123,6 +1130,40 @@ enum GoCommands {
     /// Passthrough: runs any unsupported go subcommand directly
     #[command(external_subcommand)]
     Other(Vec<OsString>),
+}
+
+#[derive(Debug, Subcommand)]
+enum UnrealCommands {
+    /// UBT or BatchFiles build command. First arg is the native command path.
+    Build {
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// Generic RunUAT command. First arg is the native command path.
+    Uat {
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// RunUAT cook command. First arg is the native command path.
+    Cook {
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// RunUAT package/stage/archive command. First arg is the native command path.
+    Package {
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// UnrealEditor-Cmd commandlet. First arg is the native command path.
+    Commandlet {
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// UnrealEditor-Cmd automation tests. First arg is the native command path.
+    Automation {
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
 }
 
 /// RTK-only subcommands that should never fall back to raw execution.
@@ -2171,6 +2212,23 @@ fn run_cli() -> Result<i32> {
 
         Commands::Gradlew { args } => gradlew_cmd::run(&args, cli.verbose)?,
 
+        Commands::Unreal { command } => match command {
+            UnrealCommands::Build { args } => {
+                unreal_cmd::run(UnrealMode::Build, &args, cli.verbose)?
+            }
+            UnrealCommands::Uat { args } => unreal_cmd::run(UnrealMode::Uat, &args, cli.verbose)?,
+            UnrealCommands::Cook { args } => unreal_cmd::run(UnrealMode::Cook, &args, cli.verbose)?,
+            UnrealCommands::Package { args } => {
+                unreal_cmd::run(UnrealMode::Package, &args, cli.verbose)?
+            }
+            UnrealCommands::Commandlet { args } => {
+                unreal_cmd::run(UnrealMode::Commandlet, &args, cli.verbose)?
+            }
+            UnrealCommands::Automation { args } => {
+                unreal_cmd::run(UnrealMode::Automation, &args, cli.verbose)?
+            }
+        },
+
         Commands::HookAudit { since } => {
             hooks::hook_audit_cmd::run(since, cli.verbose)?;
             0
@@ -2515,6 +2573,7 @@ fn is_operational_command(cmd: &Commands) -> bool {
             | Commands::Go { .. }
             | Commands::GolangciLint { .. }
             | Commands::Gt { .. }
+            | Commands::Unreal { .. }
     )
 }
 
