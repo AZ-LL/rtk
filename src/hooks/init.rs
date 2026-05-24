@@ -39,6 +39,8 @@ const CODEX_PERSONAL_MARKETPLACE_DISPLAY_NAME: &str = "Personal";
 const CODEX_PLUGIN_MANIFEST: &str =
     include_str!("../../hooks/codex/rtk-codex/.codex-plugin/plugin.json");
 const CODEX_PLUGIN_SKILL: &str = include_str!("../../hooks/codex/rtk-codex/skills/rtk/SKILL.md");
+const CODEX_PLUGIN_UE_LOGGING_SKILL: &str =
+    include_str!("../../hooks/codex/rtk-codex/skills/ue-logging/SKILL.md");
 const CODEX_PLUGIN_HOOKS_JSON: &str = include_str!("../../hooks/codex/rtk-codex/hooks/hooks.json");
 const CODEX_HOOK_COMMAND: &str = "rtk hook codex";
 const CODEX_HOOK_COMMAND_WINDOWS: &str = "rtk.exe hook codex";
@@ -2320,6 +2322,16 @@ fn install_codex_plugin_package(paths: &CodexPluginPaths, ctx: InitContext) -> R
         &paths.plugin_dir.join("skills").join("rtk").join("SKILL.md"),
         CODEX_PLUGIN_SKILL,
         "Codex plugin skill",
+        ctx,
+    )?;
+    write_codex_plugin_file(
+        &paths
+            .plugin_dir
+            .join("skills")
+            .join("ue-logging")
+            .join("SKILL.md"),
+        CODEX_PLUGIN_UE_LOGGING_SKILL,
+        "Codex UE logging plugin skill",
         ctx,
     )?;
     write_codex_plugin_file(
@@ -5281,6 +5293,23 @@ mod tests {
             .join(HOOKS_SUBDIR)
             .join(HOOKS_JSON)
             .exists());
+        assert!(paths
+            .plugin_dir
+            .join("skills")
+            .join("ue-logging")
+            .join("SKILL.md")
+            .exists());
+        assert_eq!(
+            fs::read_to_string(
+                paths
+                    .plugin_dir
+                    .join("skills")
+                    .join("ue-logging")
+                    .join("SKILL.md")
+            )
+            .unwrap(),
+            CODEX_PLUGIN_UE_LOGGING_SKILL
+        );
         assert!(
             !paths
                 .plugin_dir
@@ -5316,6 +5345,13 @@ mod tests {
             .join("rtk")
             .join("SKILL.md")
             .exists());
+        assert!(plugin_root
+            .join("skills")
+            .join("ue-logging")
+            .join("SKILL.md")
+            .exists());
+        assert!(CODEX_PLUGIN_UE_LOGGING_SKILL.contains("rtk unreal automation cat <path>"));
+        assert!(CODEX_PLUGIN_UE_LOGGING_SKILL.contains("AutomationHost.log"));
         assert!(plugin_root.join(HOOKS_SUBDIR).join(HOOKS_JSON).exists());
         assert!(!plugin_root
             .join(HOOKS_SUBDIR)
@@ -6326,6 +6362,12 @@ mod tests {
                 .plugin_dir
                 .join(HOOKS_SUBDIR)
                 .join(HOOKS_JSON)
+                .exists());
+            assert!(paths
+                .plugin_dir
+                .join("skills")
+                .join("ue-logging")
+                .join("SKILL.md")
                 .exists());
             assert!(!paths
                 .plugin_dir
