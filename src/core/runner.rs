@@ -62,8 +62,10 @@ impl<'a> RunOptions<'a> {
     }
 }
 
+type ExitFilter<'a> = dyn Fn(&str, i32) -> String + 'a;
+
 pub enum RunMode<'a> {
-    Filtered(Box<dyn Fn(&str) -> String + 'a>),
+    Filtered(Box<ExitFilter<'a>>),
     Streamed(Box<dyn StreamFilter + 'a>),
     Passthrough,
 }
@@ -108,7 +110,7 @@ pub fn run(
             } else {
                 raw
             };
-            let filtered = filter_fn(text_to_filter);
+            let filtered = filter_fn(text_to_filter, exit_code);
 
             if let Some(label) = opts.tee_label {
                 print_with_hint(&filtered, raw, label, exit_code);
@@ -172,6 +174,25 @@ pub fn run_filtered<F>(
 ) -> Result<i32>
 where
     F: Fn(&str) -> String,
+{
+    run_filtered_with_exit_code(
+        cmd,
+        tool_name,
+        args_display,
+        move |raw, _exit_code| filter_fn(raw),
+        opts,
+    )
+}
+
+pub fn run_filtered_with_exit_code<F>(
+    cmd: Command,
+    tool_name: &str,
+    args_display: &str,
+    filter_fn: F,
+    opts: RunOptions<'_>,
+) -> Result<i32>
+where
+    F: Fn(&str, i32) -> String,
 {
     run(
         cmd,
