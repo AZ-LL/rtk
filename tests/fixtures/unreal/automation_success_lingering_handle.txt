@@ -1,0 +1,5 @@
+LogInit: Display: Running automation tests
+LogAutomationController: Display: Running test Lyra.Inventory.CanAddItem
+Result={Success}
+3 tests completed, 0 failed
+Total execution time: 12.34 seconds

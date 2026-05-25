@@ -660,6 +660,26 @@ mod tests {
     }
 
     #[test]
+    fn automation_success_lingering_handle_fixture_compacts_summary() {
+        let raw = include_str!("../../../tests/fixtures/unreal/automation_success_lingering_handle.txt");
+        let out = filter_output(raw, UnrealMode::Automation, &["UnrealEditor-Cmd".to_string()]);
+        assert!(out.contains("unreal automation: ok"));
+        assert!(out.contains("3 tests completed, 0 failed"));
+        assert!(!out.contains("CanAddItem"));
+    }
+
+    #[test]
+    fn automation_nonzero_exit_overrides_success_summary() {
+        let raw = include_str!("../../../tests/fixtures/unreal/automation_success.txt");
+        let out =
+            filter_output_with_exit_code(raw, UnrealMode::Automation, &["UnrealEditor-Cmd".to_string()], 42);
+        assert!(out.contains("unreal automation: failed"));
+        assert!(out.contains("process exited with code 42"));
+        assert!(out.contains("3 tests completed"));
+        assert!(!out.contains("unreal automation: ok"));
+    }
+
+    #[test]
     fn automation_failure_keeps_failed_test_details() {
         let raw = include_str!("../../../tests/fixtures/unreal/automation_failure.txt");
         let out = filter_output(raw, UnrealMode::Automation, &["UnrealEditor-Cmd".to_string()]);

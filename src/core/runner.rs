@@ -62,8 +62,10 @@ impl<'a> RunOptions<'a> {
     }
 }
 
+type ExitFilter<'a> = dyn Fn(&str, i32) -> String + 'a;
+
 pub enum RunMode<'a> {
-    Filtered(Box<dyn Fn(&str, i32) -> String + 'a>),
+    Filtered(Box<ExitFilter<'a>>),
     Streamed(Box<dyn StreamFilter + 'a>),
     Passthrough,
 }
